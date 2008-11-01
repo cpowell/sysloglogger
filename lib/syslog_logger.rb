@@ -8,16 +8,33 @@ class SyslogLogger
 
   VERSION = '1.4.1'
 
+  # From 'man syslog.h':
+  # LOG_EMERG   A panic condition was reported to all processes.
+  # LOG_ALERT   A condition that should be corrected immediately.
+  # LOG_CRIT    A critical condition.
+  # LOG_ERR     An error message.
+  # LOG_WARNING A warning message.
+  # LOG_NOTICE  A condition requiring special handling.
+  # LOG_INFO    A general information message.
+  # LOG_DEBUG   A message useful for debugging programs.
+
+  # From logger rdoc:
+  # FATAL:  an unhandleable error that results in a program crash
+  # ERROR:  a handleable error condition
+  # WARN:   a warning
+  # INFO:   generic (useful) information about system operation
+  # DEBUG:  low-level information for developers
+
   ##
   # Maps Logger warning types to syslog(3) warning types.
 
   LOGGER_MAP = {
     :unknown => :alert,
-    :fatal   => :err,
-    :error   => :warning,
-    :warn    => :notice,
+    :fatal   => :alert,
+    :error   => :err,
+    :warn    => :warning,
     :info    => :info,
-    :debug   => :debug,
+    :debug   => :debug
   }
 
   ##
