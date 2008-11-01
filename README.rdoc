@@ -1,17 +1,117 @@
 = SyslogLogger
 
-SyslogLogger is a Logger replacement that logs to syslog.  It is almost
-drop-in with a few caveats.
+http://github.com/cpowell/sysloglogger/tree
+
+== DESCRIPTION:
+
+SyslogLogger is a Logger replacement that logs to syslog. It is almost drop-in
+with a few caveats. You can add SyslogLogger to your Rails production
+environment to aggregate logs between multiple machines.
+
+NOTE! You can only set the SyslogLogger program name when you initialize
+SyslogLogger for the first time. This is a limitation of the way SyslogLogger
+uses syslog (and in some ways, a limitation of the way syslog(3) works).
+Attempts to change SyslogLogger's program name after the first initialization
+will be ignored.
+
+This particular SyslogLogger is a fork of the original, which can be found here:
 
 http://seattlerb.rubyforge.org/SyslogLogger
 
-http://rubyforge.org/projects/seattlerb
+== SYNOPSIS:
 
-== About
+=== config/environment.rb
 
-See SyslogLogger
+  config.gem "SyslogLogger", :lib=>'syslog_logger'
 
-== Install
+=== config/environments/production.rb
 
-  sudo gem install SyslogLogger
+(Only this environment, since you probably only want to enable it for Production, and not Test or Development.)
+
+  require 'syslog_logger'
+  RAILS_DEFAULT_LOGGER = SyslogLogger.new 
+
+By default, SyslogLogger uses the program name 'rails', but this can be
+changed via the first argument to SyslogLogger.new:
+
+  RAILS_DEFAULT_LOGGER = SyslogLogger.new(program_name = 'mygreatapp')
+  
+=== BSD syslog setup
+
+==== /etc/syslog.conf
+
+Add the following lines:
+
+  !rails
+  *.*                                             /var/log/production.log
+
+Then touch /var/log/production.log and signal syslogd with a HUP
+(killall -HUP syslogd, on FreeBSD).
+
+==== /etc/newsyslog.conf
+
+Add the following line:
+
+  /var/log/production.log                 640  7     *    @T00  Z
+
+This creates a log file that is rotated every day at midnight, gzip'd, then
+kept for 7 days.  Consult newsyslog.conf(5) for more details.
+
+=== syslog-ng setup
+
+==== syslog-ng.conf
+
+A basic setup:
+
+  destination rails_log { file("/var/log/production.log"); };
+  filter f_rails { program("rails.*"); };
+  log { source(src); filter(f_rails); destination(rails_log); };
+
+A more advanced setup with formatting, etc:
+
+  destination rails { file("/var/log/rails_apps" owner("rails") group("rails") perm(0664) template("$DATE $HOST $PROGRAM [$LEVEL] $MSGONLY\n") template_escape(no) ); };
+  filter f_rails    { (program("railsappone") or program("railsapptwo")) and not match("SQL ") and not match("SELECT") and not match("INSERT INTO") and not match("UPDATE"); };
+  log { source(src); filter(f_rails); destination(rails); };
+
+=== Starting
+
+Now restart your Rails app. Your production logs should now be showing up in
+/var/log/production.log. If you have mulitple machines, you can log them all
+to a central machine with remote syslog logging for analysis. Consult your
+syslogd(8) manpage for further details.
+
+== INSTALL:
+
+  git clone git://github.com/cpowell/sysloglogger.git
+  cd sysloglogger/
+  rake gem
+  sudo gem install ./pkg/SyslogLogger-_____.gem
+
+== LICENSE:
+
+The original code is Copyright (c) Eric Hodel.
+
+For any additional code...
+
+Copyright (c) 2008 Christopher Powell
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 

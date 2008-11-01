@@ -1,83 +1,12 @@
 require 'syslog'
 require 'logger'
 
-##
-# SyslogLogger is a Logger work-alike that logs via syslog instead of to a
-# file.  You can add SyslogLogger to your Rails production environment to
-# aggregate logs between multiple machines.
-#
-# By default, SyslogLogger uses the program name 'rails', but this can be
-# changed via the first argument to SyslogLogger.new.
-#
-# NOTE! You can only set the SyslogLogger program name when you initialize
-# SyslogLogger for the first time.  This is a limitation of the way
-# SyslogLogger uses syslog (and in some ways, a limitation of the way
-# syslog(3) works).  Attempts to change SyslogLogger's program name after the
-# first initialization will be ignored.
-#
-# = Sample usage with Rails
-#
-# == config/environment/production.rb
-#
-# Add the following lines:
-#
-#   require 'syslog_logger'
-#   RAILS_DEFAULT_LOGGER = SyslogLogger.new
-#
-# == config/environment.rb
-#
-# In 0.10.0, change this line:
-#
-#   RAILS_DEFAULT_LOGGER = Logger.new("#{RAILS_ROOT}/log/#{RAILS_ENV}.log")
-#
-# to:
-#
-#   RAILS_DEFAULT_LOGGER ||= Logger.new("#{RAILS_ROOT}/log/#{RAILS_ENV}.log")
-#
-# Other versions of Rails should have a similar change.
-#
-# == BSD syslog setup
-#
-# === /etc/syslog.conf
-#
-# Add the following lines:
-#
-#  !rails
-#  *.*                                             /var/log/production.log
-#
-# Then touch /var/log/production.log and signal syslogd with a HUP
-# (killall -HUP syslogd, on FreeBSD).
-#
-# === /etc/newsyslog.conf
-#
-# Add the following line:
-#
-#   /var/log/production.log                 640  7     *    @T00  Z
-#
-# This creates a log file that is rotated every day at midnight, gzip'd, then
-# kept for 7 days.  Consult newsyslog.conf(5) for more details.
-#
-# == syslog-ng setup
-#
-# === syslog-ng.conf
-#
-# destination rails_log { file("/var/log/production.log"); };
-# filter f_rails { program("rails.*"); };
-# log { source(src); filter(f_rails); destination(rails_log); };
-#
-# == Starting
-#
-# Now restart your Rails app.  Your production logs should now be showing up
-# in /var/log/production.log.  If you have mulitple machines, you can log them
-# all to a central machine with remote syslog logging for analysis.  Consult
-# your syslogd(8) manpage for further details.
-
 class SyslogLogger
 
   ##
   # The version of SyslogLogger you are using.
 
-  VERSION = '1.4.0'
+  VERSION = '1.4.1'
 
   ##
   # Maps Logger warning types to syslog(3) warning types.

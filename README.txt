@@ -1,0 +1,3 @@
+= SyslogLogger
+
+See README.rdoc
