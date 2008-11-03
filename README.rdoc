@@ -22,7 +22,7 @@ http://seattlerb.rubyforge.org/SyslogLogger
 
 === config/environment.rb
 
-  config.gem "SyslogLogger", :lib=>'syslog_logger'
+  config.gem "cpowell-SyslogLogger", :source=>'http://gems.github.com', :lib=>'syslog_logger'
 
 === config/environments/production.rb
 
@@ -83,7 +83,7 @@ syslogd(8) manpage for further details.
 == INSTALL:
 
   $ gem sources -a http://gems.github.com (you only have to do this once)
-  $ sudo gem install cpowell-sysloglogger
+  $ sudo gem install cpowell-SyslogLogger
 
 == LICENSE:
 
