@@ -14,9 +14,8 @@ uses syslog (and in some ways, a limitation of the way syslog(3) works).
 Attempts to change SyslogLogger's program name after the first initialization
 will be ignored.
 
-This particular SyslogLogger is a fork of the original, which can be found here:
-
-http://seattlerb.rubyforge.org/SyslogLogger
+This particular SyslogLogger improves the original by correctly mapping Rails-side log severities to
+the Syslog counterparts. The original can be found here: http://seattlerb.rubyforge.org/SyslogLogger
 
 == SYNOPSIS:
 
