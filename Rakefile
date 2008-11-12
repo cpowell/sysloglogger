@@ -1,16 +1,15 @@
-# -*- ruby -*-
-
-require 'hoe'
+require 'rubygems'
+require 'rake'
+require 'echoe'
 require './lib/syslog_logger.rb'
 
-Hoe.new('SyslogLogger', SyslogLogger::VERSION) do |p|
-  p.rubyforge_name = 'seattlerb'
-  p.author = 'Eric Hodel'
-  p.email = 'drbrain@segment7.net'
-  p.summary = p.paragraphs_of('README.txt', 1).first
-  p.description = p.summary
-  p.url = p.paragraphs_of('README.txt', 2).first
-  p.changes = p.paragraphs_of('History.txt', 0..1).join("\n\n")
+Echoe.new('SyslogLogger', SyslogLogger::VERSION) do |p|
+  p.author = 'Eric Hodel; Chris Powell'
+  p.email = 'drbrain@segment7.net; cpowell@prylis.com'
+  p.description = "An improved Logger replacement that logs to syslog. It is almost drop-in with a few caveats."
+  p.url = "http://github.com/cpowell/sysloglogger"
+  p.ignore_pattern = ["tmp/*", "script/*"]
+  p.development_dependencies = []
 end
 
-# vim: syntax=Ruby
+Dir["#{File.dirname(__FILE__)}/tasks/*.rake"].sort.each { |ext| load ext }
