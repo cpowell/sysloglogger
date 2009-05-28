@@ -6,7 +6,7 @@ class SyslogLogger
   ##
   # The version of SyslogLogger you are using.
 
-  VERSION = '1.4.1'
+  VERSION = '1.4.2'
 
   # From 'man syslog.h':
   # LOG_EMERG   A panic condition was reported to all processes.
