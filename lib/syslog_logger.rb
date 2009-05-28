@@ -62,7 +62,10 @@ class SyslogLogger
     eval <<-EOM, nil, __FILE__, __LINE__ + 1
       def #{meth}(message = nil)
         return true if #{LOGGER_LEVEL_MAP[meth]} < @level
-        SYSLOG.#{LOGGER_MAP[meth]} clean(message || yield)
+        message ||= yield if block_given?
+        if message
+          SYSLOG.#{LOGGER_MAP[meth]} clean(message)
+        end
         return true
       end
 
